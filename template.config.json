@@ -2,7 +2,7 @@
   "appName": "Template Playground",
   "shortName": "Playground",
   "storagePrefix": "playground",
-  "productionUrl": "https://template-playground.vercel.app",
+  "productionUrl": "https://template-playground-nu.vercel.app",
   "vercelProject": "template-playground",
   "vercelStagingProject": "template-playground-staging"
 }
