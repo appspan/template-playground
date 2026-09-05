@@ -1,0 +1,8 @@
+{
+  "appName": "My App",
+  "shortName": "MyApp",
+  "storagePrefix": "myapp",
+  "productionUrl": "https://example.com",
+  "vercelProject": "my-app",
+  "vercelStagingProject": "my-app-staging"
+}

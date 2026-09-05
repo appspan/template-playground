@@ -1,0 +1,6 @@
+# Tooling and docs are not served
+build/
+docs/
+tests/
+README.md
+template.config.json

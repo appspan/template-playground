@@ -1,0 +1,13 @@
+{
+  "name": "local-only-pwa-template",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Static PWA template: no server, all user state on the device, staging-to-prod promote flow on Vercel.",
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "serve": "python3 -m http.server 8000 --directory public",
+    "stamp": "printf '{\"build\":%s,\"commit\":\"%s\",\"stamped\":\"%s ET\"}' \"$(git rev-list --count HEAD)\" \"$(git rev-parse --short HEAD)\" \"$(TZ=America/New_York date '+%Y-%m-%d %H:%M')\" > public/build.json && cat public/build.json && echo",
+    "deploy:staging": "bash build/deploy-staging.sh",
+    "deploy:prod": "npm run stamp && vercel deploy --prod"
+  }
+}

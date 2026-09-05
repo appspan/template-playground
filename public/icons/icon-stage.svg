@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="App icon (stage)">
+  <rect width="512" height="512" rx="112" fill="#2b9aa8"/>
+  <circle cx="256" cy="256" r="96" fill="#f5f5f7"/>
+  <g transform="translate(256 256) rotate(-45)">
+    <rect x="-300" y="120" width="600" height="72" fill="#e94f7a"/>
+    <text x="0" y="172" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="56" font-weight="700" fill="#fff" letter-spacing="6">STAGE</text>
+  </g>
+</svg>

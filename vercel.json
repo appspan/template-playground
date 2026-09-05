@@ -1,0 +1,12 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "echo 'No build: public/ is served as-is'",
+  "outputDirectory": "public",
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "headers": [
+    { "source": "/service-worker.js", "headers": [ { "key": "Cache-Control", "value": "no-cache" } ] },
+    { "source": "/app-changes.json", "headers": [ { "key": "Cache-Control", "value": "no-cache" } ] },
+    { "source": "/build.json", "headers": [ { "key": "Cache-Control", "value": "no-cache" } ] }
+  ]
+}

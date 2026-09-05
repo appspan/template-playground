@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>My App</title>
+  <meta property="og:title" content="My App">
+  <meta property="og:description" content="A local-only app: everything stays on your device.">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="icon" href="/icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+  <meta name="theme-color" content="#f5f5f7">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="MyApp">
+  <script>
+    // The ONE place the app's identity is declared for scripts. Keep in
+    // sync with template.config.json (tests/config.test.js enforces it).
+    window.APP = { prefix: 'myapp', name: 'My App' };
+  </script>
+  <script>
+    // apply the stored theme before first paint to avoid a flash
+    // (IIFE: must not leak globals that collide with app.js declarations)
+    (function () {
+      try {
+        var pref = JSON.parse(localStorage.getItem(APP.prefix + '-theme') || '"system"');
+        var dark = pref === 'dark' ||
+          (pref === 'system' && matchMedia('(prefers-color-scheme: dark)').matches);
+        document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+      } catch (e) { /* storage unavailable: system theme via CSS default */ }
+    })();
+  </script>
+  <script>
+    // Version-skew guard: cache-first can pair an old shell with a newer
+    // app.js for one visit; if the script crashes during boot, reload once —
+    // the background revalidation has consistent files by then. The retry
+    // flag prevents loops when a crash is real rather than skew.
+    (function () {
+      window.__appBooted = false;
+      addEventListener('error', function () {
+        if (window.__appBooted) return;
+        try {
+          if (sessionStorage.getItem(APP.prefix + '-bootretry')) return;
+          sessionStorage.setItem(APP.prefix + '-bootretry', '1');
+        } catch (e) { return; }   // no sessionStorage: can't guard against loops, so don't reload
+        scrollTo(0, 0);
+        location.reload();
+      });
+    })();
+  </script>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="head">
+    <h1 id="appName">My App</h1>
+    <button class="gear" id="gearBtn" type="button" aria-label="Settings">
+      <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+    </button>
+  </header>
+
+  <div class="pwahint" id="pwahint" hidden>
+    <span>Have the app on your Home Screen? Copy this link and paste it inside
+      the app so it lands with your data.</span>
+    <button id="pwahintCopy" type="button">Copy link</button>
+    <button id="pwahintClose" type="button" aria-label="Dismiss">✕</button>
+  </div>
+
+  <main>
+    <section class="card">
+      <h2>Local-only counter</h2>
+      <div class="big" id="count">0</div>
+      <button class="go" id="tapBtn" type="button">Tap me</button>
+      <p class="fine">This number lives only in this browser. Reload and it's still here.
+         No account, no server, nothing sent anywhere.</p>
+    </section>
+
+    <section class="card">
+      <h2>Share without a server</h2>
+      <p>Your count travels inside the link's <b>#fragment</b>, which browsers never
+         send to a server. Open the link on another device to import it.</p>
+      <button class="go alt" id="shareBtn" type="button">Share my count</button>
+      <button class="go alt" id="pasteBtn" type="button">Paste a link</button>
+    </section>
+
+    <section class="card">
+      <h2>Received</h2>
+      <p id="received" class="fine">Nothing received yet. Open a share link to see it here.</p>
+    </section>
+  </main>
+
+  <!-- settings subpage -->
+  <div class="settingshud" id="settingshud" hidden>
+    <div class="set-bar">
+      <button id="settingsClose" class="barback" type="button" aria-label="Back">❮ Back</button>
+      <span>Settings</span>
+    </div>
+    <div class="set-body">
+      <div class="themectl" role="group" aria-label="Appearance">
+        <span>Appearance</span>
+        <button type="button" data-pref="system">System</button>
+        <button type="button" data-pref="light">Light</button>
+        <button type="button" data-pref="dark">Dark</button>
+      </div>
+      <details class="changes" id="appchanges">
+        <summary>What's new in the app</summary>
+        <div class="history" id="apphistory"><div class="baseline">Loading updates…</div></div>
+      </details>
+      <div class="buildinfo" id="buildinfo">Build: local (unstamped)</div>
+    </div>
+  </div>
+
+  <dialog id="onboard" aria-labelledby="onboardTitle">
+    <h2 id="onboardTitle">Welcome!</h2>
+    <p>Everything you do here stays on this device. No login, no cloud.</p>
+    <p class="fine">Share links carry your data inside the link itself, so only
+       people you hand the link to can see it.</p>
+    <button id="onboardGo" class="go" type="button">Got it</button>
+  </dialog>
+
+  <dialog id="sharesheet" aria-labelledby="shareTitle">
+    <h2 id="shareTitle">Your share link</h2>
+    <input class="linkbox" id="shareUrl" type="text" readonly>
+    <button id="shareCopy" class="go" type="button">Copy link</button>
+    <button id="shareNative" class="go alt" type="button" hidden>Share…</button>
+    <button id="shareClose" class="sharecancel" type="button">Close</button>
+  </dialog>
+
+  <dialog id="installhint" aria-labelledby="installTitle">
+    <h2 id="installTitle">Install this site as an app</h2>
+    <p><b>You'll get quick access from your Home Screen, and it works offline.</b></p>
+    <ol class="installsteps" id="installIos">
+      <li>Tap the <b>Share</b> button
+        <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" fill="none" stroke="#2b9aa8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3"/><path d="M8 7l4-4 4 4"/><path d="M5 12v8h14v-8"/></svg>
+        in Safari</li>
+      <li>Choose <b>Add to Home Screen</b></li>
+      <li>Open the app from its new icon</li>
+    </ol>
+    <ol class="installsteps" id="installAndroid" hidden>
+      <li>Tap the <b>⋮ menu</b> in your browser</li>
+      <li>Choose <b>Add to Home screen</b> (or <b>Install app</b>)</li>
+      <li>Open the app from its new icon</li>
+    </ol>
+    <p class="fine">The installed app starts with its own empty storage. Use a
+       share link to carry your data across.</p>
+    <button id="installYes" class="go" type="button">OK, I installed it!</button>
+    <button id="installNo" class="sharecancel" type="button">No thanks</button>
+  </dialog>
+
+  <dialog id="useapp" aria-labelledby="useappTitle">
+    <div id="useappMain">
+      <h2 id="useappTitle">Open the installed app instead</h2>
+      <p>You installed the app — launch it from its Home Screen icon.
+         The website and the app keep <b>separate data</b>, so changes made
+         here won't show up there.</p>
+      <button id="useappSteps" class="go alt" type="button">Show install steps again</button>
+      <button id="useappDismiss" class="sharecancel" type="button">Keep using the website</button>
+    </div>
+    <div id="useappWarn" hidden>
+      <h2>Use the website anyway?</h2>
+      <p>Heads up: the website and the app are <b>not synchronized</b>.
+         Anything you do here stays here unless you move it over yourself
+         with a share link.</p>
+      <button id="useappConfirm" class="go" type="button">Use the website anyway</button>
+      <button id="useappBack" class="sharecancel" type="button">Back</button>
+    </div>
+  </dialog>
+
+  <script src="/local-state.js"></script>
+  <script src="/share-link.js"></script>
+  <script src="/nav-glow.js"></script>
+  <script src="/app.js"></script>
+</body>
+</html>

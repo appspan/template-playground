@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "baselineRevision": "0000-00-00-baseline",
+  "releases": [
+    {
+      "revision": "0000-00-00-baseline",
+      "label": "Where this app started",
+      "publishedAt": "Not yet published",
+      "baseline": true,
+      "note": "Every release adds an entry here, in the same commit that ships it, written for the people who use the app. This panel reads the file newest-first.",
+      "changes": []
+    }
+  ]
+}
