@@ -1,13 +1,23 @@
 {
-  "name": "My App (stage)",
-  "short_name": "MyApp stage",
+  "name": "Template Playground (stage)",
+  "short_name": "Playground stage",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "background_color": "#f5f5f7",
   "theme_color": "#f5f5f7",
   "icons": [
-    { "src": "/icons/stage/icon-192.png", "type": "image/png", "sizes": "192x192", "purpose": "any" },
-    { "src": "/icons/stage/icon-512.png", "type": "image/png", "sizes": "512x512", "purpose": "maskable" }
+    {
+      "src": "/icons/stage/icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/stage/icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "maskable"
+    }
   ]
 }

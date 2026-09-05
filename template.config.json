@@ -1,8 +1,8 @@
 {
-  "appName": "My App",
-  "shortName": "MyApp",
-  "storagePrefix": "myapp",
-  "productionUrl": "https://example.com",
-  "vercelProject": "my-app",
-  "vercelStagingProject": "my-app-staging"
+  "appName": "Template Playground",
+  "shortName": "Playground",
+  "storagePrefix": "playground",
+  "productionUrl": "https://template-playground.vercel.app",
+  "vercelProject": "template-playground",
+  "vercelStagingProject": "template-playground-staging"
 }
